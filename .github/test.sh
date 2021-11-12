@@ -14,5 +14,5 @@ fi
 # foo="0.0.2-this.1"
 # bar="${foo##*.}"
 # thing="0.0.2-this.$((bar + 1))"
-# echo $thing
+echo $thing
 
