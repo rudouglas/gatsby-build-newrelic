@@ -72,7 +72,7 @@ const getNextBranchVersion = (branchName, branchTagVersion) => {
     console.log({currentVersion})
     const baseVersion = currentVersion.substring(
       0,
-      currentVersion.indexOf("-")
+      currentVersion.indexOf("-") || currentVersion
     );
     console.log({baseVersion})
     console.log(`ℹ️ Branch tag '${branchName}' does not exist yet ℹ️`);
