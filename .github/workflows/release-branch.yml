@@ -32,25 +32,15 @@ jobs:
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > .npmrc
 
-      # - name: Cache dependencies
-      #   id: yarn-cache
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: '**/node_modules'
-      #     key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Cache dependencies
+        id: yarn-cache
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
 
-      # - name: Cache Gatsby build
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: |
-      #       demo/public
-      #       demo/.cache
-      #     key: ${{ runner.os }}-gatsby-build-${{ github.run_id }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-gatsby-build-
-
-      # - name: Install Dependencies
-      #   run: yarn install --frozen-lockfile
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
 
       # - name: Test Build
       #   run: yarn workspace demo build --log-pages
