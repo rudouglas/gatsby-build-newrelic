@@ -70,7 +70,7 @@ const getNextBranchVersion = (branchName, branchTagVersion) => {
     return `${baseVersion}.${dotVersion + 1}`;
   } else {
     console.log({ currentVersion });
-    const baseVersion = currentVersion.indexOf("-")
+    const baseVersion = currentVersion.indexOf("-") !== -1
       ? currentVersion.substring(0, currentVersion.indexOf("-"))
       : currentVersion;
     console.log({ baseVersion });
