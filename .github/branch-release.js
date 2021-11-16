@@ -9,12 +9,12 @@ const currentVersion = pjson.version;
  * @returns {String} Either the latest version or ''
  */
 const checkNpmToken = () => {
-  const npmToken = process.env.NPM_PUBLISH_TOKEN;
+  const npmToken = process.env.NPM_TOKEN;
   if (!npmToken) {
-    console.error(`❌ NPM_PUBLISH_TOKEN environment variable is not set ❌`);
+    console.error(`❌ NPM_TOKEN environment variable is not set ❌`);
     process.exit(1);
   }
-  console.log(`✅ NPM_PUBLISH_TOKEN environment variable is set ✅`);
+  console.log(`✅ NPM_TOKEN environment variable is set ✅`);
 };
 
 /**
