@@ -1,58 +1,58 @@
-name: Release Feature Branch
+name: Release Working Branch
 
 on:
   push:
-    # Sequence of patterns matched against refs/heads
     branches-ignore:
-      # Do not push events to branches
-      - 'main'
-      - 'develop'
+      - main
+      - develop
+
+env:
+  BOT_NAME: nr-opensource-bot
+  BOT_EMAIL: opensource+bot@newrelic.com
+
 jobs:
   generate-release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v2
         with:
+          # Ensure lerna can do the proper version bump
+          # https://github.com/lerna/lerna/issues/2542
           fetch-depth: 0
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@master
+
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
           node-version: 16
-          registry-url: https://registry.npmjs.org
 
-      - name: Install dependencies
+      - name: Cache dependencies
+        id: yarn-cache
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Cache Gatsby build
+        uses: actions/cache@v2
+        with:
+          path: |
+            demo/public
+            demo/.cache
+          key: ${{ runner.os }}-gatsby-build-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-gatsby-build-
+
+      - name: Install Dependencies
         run: yarn install --frozen-lockfile
-      - name: Get new version
-        run: |
-          CURRENT_VERSION="${{ steps.package-version.outputs.current-version }}"
-          
-          echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          VERSION_EXISTS=$(npm view ruairi-test dist-tags.${{ env.BRANCH }})
-          echo ${{ env.BRANCH }}
-          echo $CURRENT_VERSION
-          echo $VERSION_EXISTS
-          echo "$(npm view ruairi-test dist-tags.${{ env.BRANCH }})"
-          if [[ $VERSION_EXISTS != "" ]]
-          then
-              BASE_VERSION="${VERSION_EXISTS%.*}"
-              echo $BASE_VERSION
-              dotv="${VERSION_EXISTS##*.}"
-              echo "BRANCH_VERSION=${BASE_VERSION}.$((dotv + 1))" >> $GITHUB_ENV
-          else
-              echo "not"
-              echo "BRANCH_VERSION=${CURRENT_VERSION}-${{ env.BRANCH }}.1" >> $GITHUB_ENV
-          fi
-      - name: print stuff
-        run: |
-          echo ${{ env.BRANCH_VERSION }}
-      - name: Version
-        run: yarn version --new-version "${{ env.BRANCH_VERSION }}" --no-git-tag-version
+
+      - name: Test Build
+        run: yarn workspace demo build --log-pages
+        env:
+          GATSBY_EXPERIMENTAL_PAGE_BUILD_ON_DATA_CHANGES: true
+          CI: true
 
       - name: Publish
-        run: yarn publish --access public --tag ${{ env.BRANCH }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+            NPM_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+        run: yarn branch-release
