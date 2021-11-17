@@ -42,4 +42,4 @@ jobs:
           GIT_COMMITTER_NAME: Ruairi Douglas
           GIT_COMMITTER_EMAIL: ruairidouglas@gmail.com
           GH_TOKEN: ${{ secrets.OPENSOURCE_BOT_TOKEN }}
-        run: yarn release --canary minor
+        run: lerna publish --canary minor
