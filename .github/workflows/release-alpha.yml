@@ -37,9 +37,9 @@ jobs:
 
       - name: Lerna Publish
         env:
-          GIT_AUTHOR_NAME: ${{ env.BOT_NAME }}
-          GIT_AUTHOR_EMAIL: ${{ env.BOT_EMAIL }}
-          GIT_COMMITTER_NAME: ${{ env.BOT_NAME }}
-          GIT_COMMITTER_EMAIL: ${{ env.BOT_EMAIL }}
+          GIT_AUTHOR_NAME: Ruairi Douglas
+          GIT_AUTHOR_EMAIL: ruairidouglas@gmail.com
+          GIT_COMMITTER_NAME: Ruairi Douglas
+          GIT_COMMITTER_EMAIL: ruairidouglas@gmail.com
           GH_TOKEN: ${{ secrets.OPENSOURCE_BOT_TOKEN }}
         run: yarn release --canary minor
